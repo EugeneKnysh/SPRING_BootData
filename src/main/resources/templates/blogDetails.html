@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="'Пост ' + ${post.getId()}"></title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+<header th:insert="blocks/header :: header"></header>
+
+<div class="container mt-5">
+    <div class="alert alert-info mt-2">
+        <h3 th:text="${post.getTitle()}"></h3>
+        <p th:text="${post.getFullText()}"></p>
+        <p><b>Просмотры:</b> <span th:text="${post.getViews()}"></span></p>
+        <a th:href="'/blog/' + ${post.getId()} + '/edit'" class="btn btn-warning">Редактировать</a>
+<!--        <a th:href="'/blog/' + ${post.getId()} + '/remove'" class="btn btn-warning">Удалить</a>-->
+        <button th:data-post-id="${post.getId()}" type="button" id="button" class="btn btn-warning">Удалить</button>
+    </div>
+</div>
+
+<div th:insert="blocks/footer :: footer"></div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#button").click(function () {
+            let post = {
+                id: $("#button").attr("data-post-id"),
+                title: $("#title").val(),
+                anons: $("#anons").val(),
+                fullText: $("#fullText").val(),
+            };
+
+
+            $.ajax({
+                type: "DELETE",
+                url: "/blog/" + post.id + "/remove",
+                data: JSON.stringify(post),
+                contentType: "application/json",
+                dataType: "json",
+                success: function (result) {
+                    console.log(result);
+                    location.href = result.body;
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>
